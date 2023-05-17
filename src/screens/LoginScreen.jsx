@@ -27,6 +27,7 @@ const LoginScreen = ({navigation}) => {
       mobile: '',
       password: '',
     },
+
     validationSchema: loginSchema,
     onSubmit: async function (values) {
       const user = {
