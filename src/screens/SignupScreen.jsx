@@ -1,40 +1,41 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { RadioButton, Snackbar } from "react-native-paper";
+import {useState, useEffect, useMemo} from 'react';
+import {useDispatch} from 'react-redux';
+import {RadioButton} from 'react-native-paper';
 import {
   StyleSheet,
   View,
-  TextInput,
   TouchableOpacity,
   Text,
-  Image,
   ScrollView,
-} from "react-native";
-import { signUpSchema } from "../utilities/validationSchemas";
-import CustomInput from "../components/CustomInput";
-import DropDown from "../components/DropDown";
+} from 'react-native';
+import {signUpSchema} from '../utilities/validationSchemas';
+import CustomInput from '../components/CustomInput';
+import DropDown from '../components/DropDown';
 import {
   getAllCitiesOfState,
   getAllStatesOfCountry,
   getCountries,
-} from "../utilities/getStateCityCountry";
-import { useFormik } from "formik";
-import serviceCategories from "../constants/serviceCategories";
+} from '../utilities/getStateCityCountry';
+import {useFormik} from 'formik';
+import serviceCategories from '../constants/serviceCategories';
+import {setUser} from '../redux/actions/UserActions';
 
-const SignupScreen = ({ navigation }) => {
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
+const SignupScreen = ({navigation}) => {
+  const [state, setState] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
   const [countryOpen, setCountryOpen] = useState(false);
   const [stateOpen, setStateOpen] = useState(false);
   const [cityOpen, setCityOpen] = useState(false);
   const [states, setStates] = useState();
   const [cities, setCities] = useState();
   const [isServicePerson, setIsServicePerson] = useState(false);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState('');
   const [categoryOpen, setCategoryOpen] = useState(false);
 
   // initialize countries in useMemo and dependencies as 1 because this array is never going to change
   const countries = useMemo(() => getCountries(), [1]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setStates(getAllStatesOfCountry(country.value));
@@ -43,13 +44,13 @@ const SignupScreen = ({ navigation }) => {
 
   const formik = useFormik({
     initialValues: {
-      fullName: "",
-      mobile: "",
-      password: "",
+      fullName: '',
+      mobile: '',
+      password: '',
     },
     validationSchema: signUpSchema,
     onSubmit: async function (values) {
-      if (state !== "" && country !== "" && city !== "") {
+      if (state !== '' && country !== '' && city !== '') {
         let user = {
           fullName: values.fullName,
           mobileNumber: values.mobile,
@@ -72,29 +73,30 @@ const SignupScreen = ({ navigation }) => {
 
         try {
           const response = await fetch(
-            "http://192.168.43.71:3000/user/signup",
+            'https://sidekick-e028.onrender.com/user/signup',
             {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 ...user,
               }),
-            }
+            },
           );
 
           const resMessage = await response.json();
           // const resMessage = JSON.parse(parsedRes);
           if (
-            resMessage.message === "User created" &&
+            resMessage.message === 'User created' &&
             response.status === 201
           ) {
-            navigation.replace("BottomTabs", { user: resMessage?.user });
+            dispatch(setUser(resMessage?.user));
+            navigation.replace('BottomTabs', {user: resMessage?.user});
           }
           // console.log("response is", parsedRes);
         } catch (error) {
-          console.log("error was", error);
+          console.log('error was', error);
         }
       }
     },
@@ -105,32 +107,30 @@ const SignupScreen = ({ navigation }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text
           style={{
-            alignSelf: "center",
+            alignSelf: 'center',
             fontSize: 34,
-            fontWeight: "600",
-            color: "black",
-          }}
-        >
+            fontWeight: '600',
+            color: 'black',
+          }}>
           Sign Up
         </Text>
         <Text
           style={{
-            alignSelf: "center",
-          }}
-        >
+            alignSelf: 'center',
+          }}>
           Register to find your SideKick
         </Text>
-        <View style={{ alignItems: "center", marginTop: 20 }}>
-          <CustomInput formik={formik} name={"fullName"} />
-          <CustomInput formik={formik} name={"mobile"} />
-          <CustomInput formik={formik} name={"password"} />
+        <View style={{alignItems: 'center', marginTop: 20}}>
+          <CustomInput formik={formik} name={'fullName'} />
+          <CustomInput formik={formik} name={'mobile'} />
+          <CustomInput formik={formik} name={'password'} />
           <DropDown
             options={countries}
             onSelect={setCountry}
             isOpen={countryOpen}
             setIsOpen={setCountryOpen}
             value={country}
-            name={"country"}
+            name={'country'}
           />
 
           <View style={styles.cityStateContainer}>
@@ -141,7 +141,7 @@ const SignupScreen = ({ navigation }) => {
                 isOpen={stateOpen}
                 setIsOpen={setStateOpen}
                 value={state}
-                name={"state"}
+                name={'state'}
               />
             </View>
             <View style={styles.dropDownContainer}>
@@ -151,28 +151,26 @@ const SignupScreen = ({ navigation }) => {
                 isOpen={cityOpen}
                 setIsOpen={setCityOpen}
                 value={city}
-                name={"city"}
+                name={'city'}
               />
             </View>
           </View>
 
           <RadioButton.Group
-            onValueChange={(newValue) => setIsServicePerson(newValue)}
-            value={isServicePerson}
-          >
+            onValueChange={newValue => setIsServicePerson(newValue)}
+            value={isServicePerson}>
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "92%",
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '92%',
                 marginVertical: 10,
-              }}
-            >
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <RadioButton uncheckedColor="#ccc" color="#000" value={true} />
                 <Text>I provide Service</Text>
               </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <RadioButton uncheckedColor="#ccc" color="#000" value={false} />
                 <Text>Looking for Service</Text>
               </View>
@@ -186,7 +184,7 @@ const SignupScreen = ({ navigation }) => {
                 isOpen={categoryOpen}
                 setIsOpen={setCategoryOpen}
                 value={category}
-                name={"Select Service Category"}
+                name={'Select Service Category'}
               />
             </>
           )}
@@ -195,17 +193,15 @@ const SignupScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              navigation.replace("Login");
-            }}
-          >
+              navigation.replace('Login');
+            }}>
             <Text
               style={{
-                color: "#000000",
-                alignSelf: "center",
+                color: '#000000',
+                alignSelf: 'center',
                 marginTop: 10,
                 marginBottom: 10,
-              }}
-            >
+              }}>
               Already registerd?
             </Text>
           </TouchableOpacity>
@@ -218,44 +214,42 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: 'center',
     paddingHorizontal: 16,
-    backgroundColor: "white",
-    // alignItems: 'center',
+    backgroundColor: 'white',
     paddingTop: 80,
   },
   input: {
-    width: "100%",
+    width: '100%',
     height: 50,
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: '#ccc',
     borderRadius: 10,
     paddingHorizontal: 10,
     marginBottom: 20,
   },
   button: {
-    width: "100%",
-    backgroundColor: "#000000",
+    width: '100%',
+    backgroundColor: '#000000',
     borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 10,
   },
   buttonText: {
-    alignSelf: "center",
-    color: "#fff",
+    alignSelf: 'center',
+    color: '#fff',
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   cityStateContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   dropDownContainer: {
-    width: "48%",
+    width: '48%',
   },
   snackBar: {
-    backgroundColor: "green",
+    backgroundColor: 'green',
   },
 });
 

@@ -1,6 +1,6 @@
 // jai Ganesh
 import {useNavigation} from '@react-navigation/native';
-import React, {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {
   TextInput,
   View,
@@ -9,25 +9,32 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import getAllProfiles from '../utilities/getAllProfiles';
+import {useDispatch, useSelector} from 'react-redux';
+import {getAll, getByCategory} from '../redux/actions/ProfilesActions';
 
-const SearchBar = ({setMatchedProfiles}) => {
+const SearchBar = () => {
   const navigation = useNavigation();
   const [currentRoute, setCurrentRoute] = useState('HomeScreen');
   const [searchText, setSearchText] = useState('');
+  const profiles = useSelector(state => state.profilesReducer.allProfiles);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await getAllProfiles();
-      if (searchText) {
-        const filteredProfiles = res?.filter(profile =>
-          profile?.serviceCategory
-            ?.toUpperCase()
-            .includes(searchText?.toUpperCase()),
-        );
-        setMatchedProfiles(filteredProfiles);
-      }
-    };
-    fetchData();
+    if (profiles.length === 0) {
+      const fetchData = async () => {
+        const res = await getAllProfiles();
+        dispatch(getAll(res));
+      };
+      fetchData();
+    }
+    if (searchText) {
+      const filteredProfiles = profiles?.filter(profile =>
+        profile?.serviceCategory
+          ?.toUpperCase()
+          .includes(searchText?.toUpperCase()),
+      );
+      dispatch(getByCategory(filteredProfiles));
+    }
   }, [searchText]);
 
   return (
@@ -43,7 +50,8 @@ const SearchBar = ({setMatchedProfiles}) => {
         />
         <TextInput
           placeholder="search for services..."
-          style={{width: '80%', backgroundColor: 'white'}}
+          placeholderTextColor={'#000000'}
+          style={{width: '80%', color: '#000000'}}
           value={searchText}
           onChangeText={text => {
             setSearchText(text);

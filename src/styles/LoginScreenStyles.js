@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 const loginStyles = StyleSheet.create({
   topContainer: {
     alignItems: "center",
@@ -8,7 +8,6 @@ const loginStyles = StyleSheet.create({
   },
   loginContinueText: {
     fontSize: 16,
-    fontFamily: "serif",
     fontWeight: "700",
   },
   bottom: {

@@ -5,29 +5,36 @@ import {
   TouchableOpacity,
   Linking,
   StyleSheet,
-} from "react-native";
-import React, { useContext, useState } from "react";
-import getFirstLetters from "../../utilities/getFirstLetters";
-import { Avatar, Snackbar } from "react-native-paper";
+} from 'react-native';
+import React, {useContext, useState} from 'react';
+import getFirstLetters from '../../utilities/getFirstLetters';
+import {Avatar, Snackbar} from 'react-native-paper';
+import {useDispatch} from 'react-redux';
+import {setReceiver} from '../../redux/actions/ChatHelperActions';
+import {deleteChat} from '../../redux/actions/ChatActions';
 
-const ChatCard = ({ chat, navigation }) => {
-  const avatarLabel = getFirstLetters(chat?.senderDetails?.fullName);
+const ChatCard = ({chat, navigation}) => {
+  const dispatch = useDispatch();
+  const avatarLabel = getFirstLetters(chat?.chatWith?.fullName);
 
   return (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("Message", { receiver: chat.senderDetails })
-      }
-      style={chatCardStyles.container}
-    >
+      onLongPress={() => {
+        dispatch(deleteChat(chat.chatId));
+      }}
+      onPress={() => {
+        dispatch(setReceiver(chat.chatWith));
+        navigation.navigate('Message');
+      }}
+      style={chatCardStyles.container}>
       <Avatar.Text
         size={45}
         label={avatarLabel}
-        style={{ backgroundColor: "#000", paddingBottom: 2 }}
+        style={{backgroundColor: '#000', paddingBottom: 2}}
       />
       <View>
         <Text style={chatCardStyles.nameText}>
-          {(chat?.senderDetails?.fullName).toUpperCase()}
+          {(chat?.chatWith?.fullName).toUpperCase()}
         </Text>
       </View>
     </TouchableOpacity>
@@ -39,8 +46,8 @@ const chatCardStyles = StyleSheet.create({
     marginHorizontal: 2,
     marginVertical: 2,
     borderRadius: 5,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     columnGap: 10,
     borderWidth: 0.4,
     paddingVertical: 15,
@@ -48,7 +55,7 @@ const chatCardStyles = StyleSheet.create({
   },
   nameText: {
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: '500',
   },
   rightContainer: {},
 });

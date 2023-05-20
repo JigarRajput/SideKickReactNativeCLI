@@ -6,9 +6,10 @@ import {
   Image,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {Snackbar} from 'react-native-paper';
-import React, {useState, useContext} from 'react';
+import React, {useState} from 'react';
 import loginStyles from '../styles/LoginScreenStyles';
 import images from '../constants/images';
 import {useFormik} from 'formik';
@@ -20,6 +21,8 @@ import {useDispatch} from 'react-redux';
 const LoginScreen = ({navigation}) => {
   const [visible, setVisible] = React.useState(false);
   const [loginMessage, setLoginMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const dispatch = useDispatch();
 
   const formik = useFormik({
@@ -36,19 +39,27 @@ const LoginScreen = ({navigation}) => {
       };
 
       try {
-        const response = await fetch('http://192.168.43.71:3000/user/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        setIsLoading(true); // for activity indicator to show on login button
+
+        const response = await fetch(
+          'https://sidekick-e028.onrender.com/user/login',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              ...user,
+            }),
           },
-          body: JSON.stringify({
-            ...user,
-          }),
-        });
+        );
 
         const resMessage = await response.json();
 
+        setIsLoading(false);
+
         const paramsUser = {
+          _id: resMessage?.user?._id,
           city: resMessage?.user?.city,
           state: resMessage?.user?.state,
           mobileNumber: resMessage?.user?.mobileNumber,
@@ -90,7 +101,15 @@ const LoginScreen = ({navigation}) => {
           <TouchableOpacity
             style={loginStyles.loginBtn}
             onPress={formik.handleSubmit}>
-            <Text style={loginStyles.loginBtnText}>{'Login'}</Text>
+            {isLoading ? (
+              <ActivityIndicator
+                animating={isLoading}
+                size={'small'}
+                color={'#ffffff'}
+              />
+            ) : (
+              <Text style={loginStyles.loginBtnText}>{'Login'}</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
             <Text style={loginStyles.signupText}>Not a user? Sign Up</Text>

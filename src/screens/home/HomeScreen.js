@@ -4,19 +4,15 @@ import SearchBar from '../../components/SearchBar';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {SafeAreaView} from 'react-native';
 import {homeScreenStyles} from '../../styles/HomeScreenStyles';
-import {useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
+import {useMemo} from 'react';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = () => {
   const user = useSelector(state => state.userReducer.user);
 
   return (
     <SafeAreaView style={homeScreenStyles.container}>
-      <ScrollView stickyHeaderIndices={[1]} stickyHeaderHiddenOnScroll={false}>
-        <Text style={homeScreenStyles.welcomeText}>
-          Welcome, {user.fullName.split(' ')[0]}
-        </Text>
-        <SearchBar allProfiles={[]} setProfiles={() => {}} />
+      <ScrollView>
         <Text
           style={{
             paddingHorizontal: 18,
