@@ -12,41 +12,46 @@ import ProfileCard from '../../components/ProfileCard';
 import {useRoute} from '@react-navigation/native';
 import ListEmpty from '../../components/ListEmpty';
 import {useDispatch, useSelector} from 'react-redux';
-import {getByCategory} from '../../redux/actions/ProfilesActions';
+import getAllProfiles from '../../utilities/getAllProfiles';
+import {getByCategory, getAll} from '../../redux/actions/ProfilesActions';
 
 const SearchScreen = () => {
-  console.log('matched profiles', matchedProfiles);
-
   const category = useRoute()?.params?.category;
   const profiles = useSelector(state => state.profilesReducer.allProfiles);
   const dispatch = useDispatch();
-  console.log(profiles, 'all profiles');
 
-  const matchedProfiles = useSelector(
+  const filteredProfiles = useSelector(
     state => state.profilesReducer.filteredProfiles,
   );
 
+  const fetchData = async () => {
+    const res = await getAllProfiles();
+    dispatch(getAll(res));
+  };
+
   useEffect(() => {
+    if (profiles.length === 0) {
+      fetchData();
+    }
     if (category) {
-      const filteredProfiles = profiles.filter(profile =>
+      const matchedProfiles = profiles.filter(profile =>
         profile.serviceCategory.toUpperCase().includes(category.toUpperCase()),
       );
-      console.log('filteredProfiles', filteredProfiles);
-      dispatch(getByCategory(filteredProfiles));
-    } else {
-      console.log('filteredProfiles', profiles);
+      dispatch(getByCategory(matchedProfiles));
+    }
+    if (!category) {
       dispatch(getByCategory(profiles));
     }
-  }, [category]);
+  }, [category, profiles.length]);
 
   return (
     <SafeAreaView style={styles.container}>
       <SearchBar />
-      {matchedProfiles.length === 0 ? (
+      {filteredProfiles.length === 0 ? (
         <ActivityIndicator size="large" animating={true} color={'#000'} />
       ) : (
         <FlatList
-          data={matchedProfiles}
+          data={filteredProfiles}
           ListEmptyComponent={<ListEmpty />}
           renderItem={({item}) => <ProfileCard profile={item} />}
         />
@@ -59,7 +64,8 @@ export default SearchScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 10 : 0,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
 });

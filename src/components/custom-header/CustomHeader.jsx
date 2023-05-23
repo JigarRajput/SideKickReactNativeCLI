@@ -17,7 +17,10 @@ const CustomHeader = ({navigation, options, route}) => {
           <TouchableOpacity
             onPress={() => navigation.navigate('Search')}
             style={customHeaderStyles.searchIcon}>
-            <Image source={require('../../assets/search_icon.png')} />
+            <Image
+              source={require('../../assets/search_icon.png')}
+              style={customHeaderStyles.searchIcon}
+            />
           </TouchableOpacity>
         </View>
       </View>

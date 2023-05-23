@@ -1,11 +1,9 @@
 import {Text, View, ScrollView, Image} from 'react-native';
 import CategoryCards from '../../components/CategoryCards';
-import SearchBar from '../../components/SearchBar';
 import {ImageSlider} from 'react-native-image-slider-banner';
 import {SafeAreaView} from 'react-native';
 import {homeScreenStyles} from '../../styles/HomeScreenStyles';
-import {useSelector} from 'react-redux';
-import {useMemo} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 
 const HomeScreen = () => {
   const user = useSelector(state => state.userReducer.user);

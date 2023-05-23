@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import {signUpSchema} from '../utilities/validationSchemas';
 import CustomInput from '../components/CustomInput';
@@ -32,6 +33,7 @@ const SignupScreen = ({navigation}) => {
   const [isServicePerson, setIsServicePerson] = useState(false);
   const [category, setCategory] = useState('');
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // initialize countries in useMemo and dependencies as 1 because this array is never going to change
   const countries = useMemo(() => getCountries(), [1]);
@@ -72,6 +74,7 @@ const SignupScreen = ({navigation}) => {
         }
 
         try {
+          setIsLoading(true);
           const response = await fetch(
             'https://sidekick-e028.onrender.com/user/signup',
             {
@@ -87,6 +90,7 @@ const SignupScreen = ({navigation}) => {
 
           const resMessage = await response.json();
           // const resMessage = JSON.parse(parsedRes);
+          setIsLoading(false);
           if (
             resMessage.message === 'User created' &&
             response.status === 201
@@ -189,7 +193,15 @@ const SignupScreen = ({navigation}) => {
             </>
           )}
           <TouchableOpacity style={styles.button} onPress={formik.handleSubmit}>
-            <Text style={styles.buttonText}>Register</Text>
+            {isLoading ? (
+              <ActivityIndicator
+                animating={isLoading}
+                size={'small'}
+                color={'#ffffff'}
+              />
+            ) : (
+              <Text style={styles.buttonText}>{'Register'}</Text>
+            )}
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {

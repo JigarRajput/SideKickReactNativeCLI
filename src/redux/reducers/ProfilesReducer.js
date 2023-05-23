@@ -12,13 +12,13 @@ const profilesReducer = (state = initialState, action) => {
     case constants.GET_ALL: {
       return {
         ...state,
-        allProfiles: [...action.payload],
+        allProfiles: action.payload,
       };
     }
     case constants.GET_BY_CATEGORY: {
       return {
         ...state,
-        filteredProfiles: [...action.payload],
+        filteredProfiles: action.payload,
       };
     }
 
@@ -32,9 +32,11 @@ const profilesReducer = (state = initialState, action) => {
     case constants.REMOVE_SAVE: {
       return {
         ...state,
-        savedProfiles: [...state.savedProfiles.filter(
-          profile =>  action.payload._id !== profile._id,
-        )],
+        savedProfiles: [
+          ...state.savedProfiles.filter(
+            profile => action.payload._id !== profile._id,
+          ),
+        ],
       };
     }
 

@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext, useCallback} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,8 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  ActivityIndicator,
+  Image,
 } from 'react-native';
-import {PaperPlaneTilt} from 'phosphor-react-native';
 import io from 'socket.io-client';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -103,13 +102,17 @@ const MessageScreen = () => {
         <TextInput
           style={styles.textInput}
           placeholder="Type your message"
+          placeholderTextColor="#cdcdcd"
           value={newMessage}
           onChangeText={setNewMessage}
         />
         <TouchableOpacity
           style={styles.sendButton}
           onPress={() => handleSend()}>
-          <PaperPlaneTilt size={20} color="white" />
+          <Image
+            source={require('../../assets/send.png')}
+            style={styles.sendIcon}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -160,11 +163,15 @@ const styles = StyleSheet.create({
     color: '#000000',
   },
   sendButton: {
-    backgroundColor: 'black',
-    paddingVertical: 10,
-    paddingHorizontal: 25,
+    backgroundColor: '#030A4E',
+    padding: 12,
     borderRadius: 100,
-    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sendIcon: {
+    width: 20,
+    height: 20,
   },
 });
 

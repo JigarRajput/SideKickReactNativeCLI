@@ -3,16 +3,15 @@ import {StyleSheet} from 'react-native';
 const customHeaderStyles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    borderBottomWidth: 0.4,
+    borderBottomWidth: 1,
     alignItems: 'center',
-    padding: 5,
     justifyContent: 'space-between',
     backgroundColor: '#fff',
-        paddingVertical: 10,
-    paddingHorizontal:5
+    paddingVertical: 15,
+    paddingHorizontal: 5,
   },
-    headerLeft: {
-      paddingStart:5
+  headerLeft: {
+    paddingStart: 5,
   },
   headerRight: {},
   flexOne: {
@@ -30,6 +29,8 @@ const customHeaderStyles = StyleSheet.create({
   searchIcon: {
     alignSelf: 'flex-end',
     paddingEnd: 10,
+    width: 25,
+    height: 25,
   },
 });
 

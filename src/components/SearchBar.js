@@ -13,20 +13,14 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getAll, getByCategory} from '../redux/actions/ProfilesActions';
 
 const SearchBar = () => {
-  const navigation = useNavigation();
-  const [currentRoute, setCurrentRoute] = useState('HomeScreen');
   const [searchText, setSearchText] = useState('');
   const profiles = useSelector(state => state.profilesReducer.allProfiles);
+  const filteredProfiles = useSelector(
+    state => state.profilesReducer.filteredProfiles,
+  );
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (profiles.length === 0) {
-      const fetchData = async () => {
-        const res = await getAllProfiles();
-        dispatch(getAll(res));
-      };
-      fetchData();
-    }
     if (searchText) {
       const filteredProfiles = profiles?.filter(profile =>
         profile?.serviceCategory
@@ -35,14 +29,10 @@ const SearchBar = () => {
       );
       dispatch(getByCategory(filteredProfiles));
     }
-  }, [searchText]);
+  }, [searchText, profiles]);
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => {
-        currentRoute === 'HomeScreen' ? navigation.navigate('Search') : null;
-      }}>
+    <View style={styles.container}>
       <View style={styles.searchBar}>
         <Image
           style={{width: 20, height: 20, marginEnd: 10}}
@@ -58,15 +48,14 @@ const SearchBar = () => {
           }}
         />
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingTop: 8,
-    paddingBottom: 20,
+    paddingBottom: 10,
     paddingHorizontal: 20,
     backgroundColor: 'white',
   },
@@ -78,7 +67,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: '#636363',
     paddingHorizontal: 10,
-    paddingVertical: 0,
     backgroundColor: 'white',
     shadowColor: '#000',
     shadowOffset: {
